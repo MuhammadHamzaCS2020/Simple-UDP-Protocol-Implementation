@@ -9,8 +9,9 @@ import java.net.*;
 import java.util.Scanner;
 
 public class Sender extends Thread{
-	DatagramSocket mySocket;
-	Thread send,receive;
+	private DatagramSocket mySocket;
+	private Thread send,receive;
+	private String[] ListOfFiles=null;
 	public String menu() {
 		System.out.println("Type List for ListOfFiles");
 		System.out.println("Type Select File Name That you want to Download");
@@ -71,7 +72,9 @@ public class Sender extends Thread{
 							OOS.writeObject(new ClientRequest((short)0,"")); // create an object	
 						}
 						else if(str.equals("Download") || str.equals("download")) {
-							OOS.writeObject(new ClientRequest((short)1,"file1"));
+							
+							int index=showFiles();
+							OOS.writeObject(new ClientRequest((short)1,ListOfFiles[index]));
 						}
 						else {
 							break;
@@ -107,6 +110,15 @@ public class Sender extends Thread{
 					//System.out.println("File is info is recieved...");			
 				}
 				mySocket.close();
+			}
+
+			private int showFiles() {
+				System.out.println("Which File You want to download plz select No(1,2,3 etc)");
+				for (int i = 0; i < ListOfFiles.length; i++) {
+					System.out.println(i+" "+ListOfFiles[i]);
+				}
+				Scanner input=new Scanner(System.in);
+				return input.nextInt();
 			}
 		});
 		send.start();
@@ -148,20 +160,22 @@ public class Sender extends Thread{
 
 	private void getInfoObject(FileDownloading obj) throws ClassNotFoundException, IOException {
 		if(obj.getReponse()==10) {
+			System.out.println("asdfghjklqwertyuiopzxcvbnm");
 			System.err.println(obj.getReponse()+ " "+obj.getFilesInfo()+" "+ obj.getName());
+			String str=obj.getName();
+			ListOfFiles=str.split("//");
 		}
 		else if(obj.getReponse()==11) {
 			System.err.println(obj.getReponse()+" "+ obj.getName()+ " "+obj.getFilesInfo());
 			CollectFileData(obj.getFilesInfo());
 		}
-		else if(obj.getReponse()==12) {
+		else if(obj.getReponse()==12){
 			System.err.print(obj.getName());
 			File TextFile = new File("OutputData.txt");
 			FileWriter fw = new FileWriter(TextFile,true);
 			fw.write(obj.getName());
 			fw.close();
 		}
-
 	}
 	public static void main(String[] args) throws Exception {
 		@SuppressWarnings("unused")
