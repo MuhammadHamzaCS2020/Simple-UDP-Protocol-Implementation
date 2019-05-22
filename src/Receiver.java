@@ -96,8 +96,10 @@ public class Receiver extends Thread{
 		// create FileInputStream object
 		fin = new FileInputStream(file);
 		byte fileContent[] = new byte[(int)file.length()];
+		
 		int division=(fileContent.length)/100;
 		int mode=(fileContent.length)%100;
+		
 		byte[] content=new byte[100];
 		fin.read(fileContent);
 		int i=0;
